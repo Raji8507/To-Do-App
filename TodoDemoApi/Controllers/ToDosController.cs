@@ -40,7 +40,9 @@ namespace TodoDemoApi.Controllers
                     t.IsCompleted,
                     t.DueDate,
                     t.AssignedToUserId,
-                    t.CreatedByUserId
+                    t.CreatedByUserId,
+                    t.AssignedToUser?.Username,
+                    t.CreatedByUser?.Username
                 ));
                 return Ok(dtoList);
             }
@@ -54,7 +56,9 @@ namespace TodoDemoApi.Controllers
                     t.IsCompleted,
                     t.DueDate,
                     t.AssignedToUserId,
-                    t.CreatedByUserId
+                    t.CreatedByUserId,
+                    t.AssignedToUser?.Username,
+                    t.CreatedByUser?.Username
                 ));
                 return Ok(dtoList);
             }
@@ -75,7 +79,9 @@ namespace TodoDemoApi.Controllers
                     t.IsCompleted,
                     t.DueDate,
                     t.AssignedToUserId,
-                    t.CreatedByUserId
+                    t.CreatedByUserId,
+                    t.AssignedToUser?.Username,
+                    t.CreatedByUser?.Username
                 );
                 return Ok(dto);
             }

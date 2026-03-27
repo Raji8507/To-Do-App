@@ -72,5 +72,10 @@ namespace TodoDemoApi.Services
 
         public async Task<User?> GetByIdAsync(int id) => await _db.Users.FindAsync(id);
         public async Task<User?> GetByUsernameAsync(string username) => await _db.Users.SingleOrDefaultAsync(u => u.Username == username);
+
+        public async Task<IEnumerable<User>> GetAllAsync()
+        {
+            return await _db.Users.AsNoTracking().ToListAsync();
+        }
     }
 }

@@ -76,6 +76,12 @@ namespace TodoDemoApi
                 });
             });
 
+            builder.Services.AddCors(options=>
+                options.AddPolicy("AllowReactApp",
+                p=>p.AllowAnyHeader()
+                .AllowAnyMethod()
+                .WithOrigins("http://localhost:3000")));
+
             var app = builder.Build();
 
             app.UseSwagger();
@@ -84,7 +90,7 @@ namespace TodoDemoApi
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseCors("AllowReactApp");
             app.MapControllers();
 
             // Ensure DB is created and seeded
