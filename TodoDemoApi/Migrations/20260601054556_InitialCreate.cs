@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TodoDemoApi.Migrations
 {
     /// <inheritdoc />
-    public partial class DBFirst : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -63,8 +63,8 @@ namespace TodoDemoApi.Migrations
                 columns: new[] { "Id", "PasswordHash", "Role", "Username" },
                 values: new object[,]
                 {
-                    { 1, "$2a$11$KnqprLxvfVoe18d36AG6guWb1VQwz39p8oxq6bG7DI9a.chqR8F6u", "Manager", "manager1" },
-                    { 2, "$2a$11$ddNxQHL2df7TZRBgKmCjRuuXjNkE.NS.TVwQ7MA4iN0J.fN9dSohC", "Employee", "employee1" }
+                    { 1, "$2a$11$Z5z0TPPKSEaHxwmI/LP4AO.4BGQg6TRYQ1xV7/uJ9DC3WITHgadkK", "Manager", "manager1" },
+                    { 2, "$2a$11$FD658pZfyAwTSHFn8aR0s.5UGhoocPWfzP1lEWs3O3ao/dAziqpc2", "Employee", "employee1" }
                 });
 
             migrationBuilder.CreateIndex(

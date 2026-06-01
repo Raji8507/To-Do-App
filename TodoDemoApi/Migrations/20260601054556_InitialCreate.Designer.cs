@@ -12,8 +12,8 @@ using TodoDemoApi.Data;
 namespace TodoDemoApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260325063954_DBFirst")]
-    partial class DBFirst
+    [Migration("20260601054556_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -89,14 +89,14 @@ namespace TodoDemoApi.Migrations
                         new
                         {
                             Id = 1,
-                            PasswordHash = "$2a$11$KnqprLxvfVoe18d36AG6guWb1VQwz39p8oxq6bG7DI9a.chqR8F6u",
+                            PasswordHash = "$2a$11$Z5z0TPPKSEaHxwmI/LP4AO.4BGQg6TRYQ1xV7/uJ9DC3WITHgadkK",
                             Role = "Manager",
                             Username = "manager1"
                         },
                         new
                         {
                             Id = 2,
-                            PasswordHash = "$2a$11$ddNxQHL2df7TZRBgKmCjRuuXjNkE.NS.TVwQ7MA4iN0J.fN9dSohC",
+                            PasswordHash = "$2a$11$FD658pZfyAwTSHFn8aR0s.5UGhoocPWfzP1lEWs3O3ao/dAziqpc2",
                             Role = "Employee",
                             Username = "employee1"
                         });
