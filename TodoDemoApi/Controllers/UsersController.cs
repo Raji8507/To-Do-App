@@ -39,14 +39,14 @@ namespace TodoDemoApi.Controllers
             if (string.Equals(CurrentUserRole, "Manager", StringComparison.OrdinalIgnoreCase))
             {
                 var users = await _userService.GetAllAsync();
-                var dtos = users.Select(u => new UserDto(u.Id, u.Username, u.Role));
+                var dtos = users.Select(u => new UserDTO(u.Id, u.Username, u.Role));
                 return Ok(dtos);
             }
             else
             {
                 var user = await _userService.GetByIdAsync(CurrentUserId);
                 if (user == null) return NotFound();
-                var dto = new UserDto(user.Id, user.Username, user.Role);
+                var dto = new UserDTO(user.Id, user.Username, user.Role);
                 return Ok(new[] { dto });
             }
         }
@@ -58,7 +58,7 @@ namespace TodoDemoApi.Controllers
         {
             var user = await _userService.GetByIdAsync(CurrentUserId);
             if (user == null) return NotFound();
-            return Ok(new UserDto(user.Id, user.Username, user.Role));
+            return Ok(new UserDTO(user.Id, user.Username, user.Role));
         }
 
         // Optional: GET api/users/{id}
@@ -71,7 +71,7 @@ namespace TodoDemoApi.Controllers
 
             if (string.Equals(CurrentUserRole, "Manager", StringComparison.OrdinalIgnoreCase) || user.Id == CurrentUserId)
             {
-                return Ok(new UserDto(user.Id, user.Username, user.Role));
+                return Ok(new UserDTO(user.Id, user.Username, user.Role));
             }
             return Forbid();
         }

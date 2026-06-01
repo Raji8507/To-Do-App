@@ -2,7 +2,7 @@
 {
     public record CreateToDoDto(string Title, string? Description, DateTime? DueDate, int? AssignedToUserId);
     public record UpdateToDoDto(string? Title, string? Description, DateTime? DueDate, bool? IsCompleted, int? AssignedToUserId);
-    public record ToDoDto(
+    public record ToDoDTO(
             int Id,
             string Title,
             string? Description,

@@ -1,0 +1,6 @@
+﻿namespace TodoDemoApi.DTOs
+{
+    public record RegisterDto(string Username, string Password, string Role);
+    public record LoginDto(string Username, string Password);
+    public record AuthResponseDto(string Token, int UserId, string Username, string Role);
+}

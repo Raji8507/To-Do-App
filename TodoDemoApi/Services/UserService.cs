@@ -33,6 +33,16 @@ namespace TodoDemoApi.Services
             return user;
         }
 
+        public async Task<AuthResponseDto?> AuthenticateAsync(string username, string password)
+        {
+            var user = await _db.Users.SingleOrDefaultAsync(u => u.Username == username);
+            if (user == null) return null;
+            if (!BCrypt.Net.BCrypt.Verify(password, user.PasswordHash)) return null;
+
+            var token = GenerateJwtToken(user);
+            return new AuthResponseDto(token, user.Id, user.Username, user.Role);
+        }
+
         private string GenerateJwtToken(User user)
         {
             var jwtSection = _configuration.GetSection("JwtSettings");

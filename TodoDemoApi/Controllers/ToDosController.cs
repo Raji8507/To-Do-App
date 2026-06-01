@@ -33,7 +33,7 @@ namespace TodoDemoApi.Controllers
             if (CurrentUserRole == "Manager")
             {
                 var all = await _todoService.GetAllAsync(); // returns IEnumerable<ToDo>
-                var dtoList = all.Select(t => new ToDoDto(
+                var dtoList = all.Select(t => new ToDoDTO(
                     t.Id,
                     t.Title,
                     t.Description,
@@ -49,7 +49,7 @@ namespace TodoDemoApi.Controllers
             else
             {
                 var mine = await _todoService.GetByAssignedUserIdAsync(CurrentUserId);
-                var dtoList = mine.Select(t => new ToDoDto(
+                var dtoList = mine.Select(t => new ToDoDTO(
                     t.Id,
                     t.Title,
                     t.Description,
@@ -72,7 +72,7 @@ namespace TodoDemoApi.Controllers
 
             if (CurrentUserRole == "Manager" || t.AssignedToUserId == CurrentUserId)
             {
-                var dto = new ToDoDto(
+                var dto = new ToDoDTO(
                     t.Id,
                     t.Title,
                     t.Description,
