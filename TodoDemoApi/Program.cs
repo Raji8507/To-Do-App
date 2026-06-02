@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using TodoDemoApi.Data;
+using TodoDemoApi.Mappings;
 using TodoDemoApi.Services;
 
 namespace TodoDemoApi
@@ -72,6 +73,7 @@ namespace TodoDemoApi
                     }
                 });
             });
+            builder.Services.AddAutoMapper(typeof(MappingProfile));
             var app = builder.Build();
 
             app.UseSwagger();

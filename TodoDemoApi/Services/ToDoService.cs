@@ -2,24 +2,25 @@
 using TodoDemoApi.Data;
 using TodoDemoApi.DTOs;
 using TodoDemoApi.Models;
+using AutoMapper;
 
 namespace TodoDemoApi.Services
 {
     public class ToDoService : IToDoService
     {
         private readonly AppDbContext _db;
-        public ToDoService(AppDbContext db) { _db = db; }
+        private readonly IMapper _mapper;
+        public ToDoService(AppDbContext db, IMapper mapper)
+        {
+            _db = db;
+            _mapper = mapper;
+        }
 
         public async Task<ToDo> CreateAsync(CreateToDoDto dto, int createdByUserId)
         {
-            var todo = new ToDo
-            {
-                Title = dto.Title,
-                Description = dto.Description,
-                DueDate = dto.DueDate,
-                AssignedToUserId = dto.AssignedToUserId,
-                CreatedByUserId = createdByUserId
-            };
+            var todo = _mapper.Map<ToDo>(dto);
+
+            todo.CreatedByUserId = createdByUserId;
             _db.ToDos.Add(todo);
             await _db.SaveChangesAsync();
             return todo;
@@ -62,14 +63,9 @@ namespace TodoDemoApi.Services
         public async Task<ToDo?> UpdateAsync(int id, UpdateToDoDto dto)
         {
             var t = await _db.ToDos.FindAsync(id);
-            if (t == null) return null;
-
-            if (dto.Title != null) t.Title = dto.Title;
-            if (dto.Description != null) t.Description = dto.Description;
-            if (dto.DueDate.HasValue) t.DueDate = dto.DueDate;
-            if (dto.IsCompleted.HasValue) t.IsCompleted = dto.IsCompleted.Value;
-            if (dto.AssignedToUserId.HasValue) t.AssignedToUserId = dto.AssignedToUserId;
-
+            if (t == null)
+                return null;
+            _mapper.Map(dto, t);
             await _db.SaveChangesAsync();
             return t;
         }

@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 using System.Security.Claims;
 using TodoDemoApi.DTOs;
 using TodoDemoApi.Services;
@@ -15,111 +14,128 @@ namespace TodoDemoApi.Controllers
     {
         private readonly IToDoService _todoService;
         private readonly IUserService _userService;
+        private readonly IMapper _mapper;
 
-        public ToDosController(IToDoService todoService, IUserService userService)
+        public ToDosController(
+            IToDoService todoService,
+            IUserService userService,
+            IMapper mapper)
         {
             _todoService = todoService;
             _userService = userService;
+            _mapper = mapper;
         }
 
-        private int CurrentUserId => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue(ClaimTypes.Name) ?? "0");
+        private int CurrentUserId =>
+            int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)
+                ?? User.FindFirstValue(ClaimTypes.Name)
+                ?? "0");
 
-        private string CurrentUserRole => User.FindFirstValue(ClaimTypes.Role) ?? "";
+        private string CurrentUserRole =>
+            User.FindFirstValue(ClaimTypes.Role) ?? "";
 
-        // Manager: get all; Employee: get only assigned
+        // GET api/todos
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             if (CurrentUserRole == "Manager")
             {
-                var all = await _todoService.GetAllAsync(); // returns IEnumerable<ToDo>
-                var dtoList = all.Select(t => new ToDoDTO(
-                    t.Id,
-                    t.Title,
-                    t.Description,
-                    t.IsCompleted,
-                    t.DueDate,
-                    t.AssignedToUserId,
-                    t.CreatedByUserId,
-                    t.AssignedToUser?.Username,
-                    t.CreatedByUser?.Username
-                ));
+                var todos = await _todoService.GetAllAsync();
+
+                var dtoList =
+                    _mapper.Map<IEnumerable<ToDoDTO>>(todos);
+
                 return Ok(dtoList);
             }
-            else
-            {
-                var mine = await _todoService.GetByAssignedUserIdAsync(CurrentUserId);
-                var dtoList = mine.Select(t => new ToDoDTO(
-                    t.Id,
-                    t.Title,
-                    t.Description,
-                    t.IsCompleted,
-                    t.DueDate,
-                    t.AssignedToUserId,
-                    t.CreatedByUserId,
-                    t.AssignedToUser?.Username,
-                    t.CreatedByUser?.Username
-                ));
-                return Ok(dtoList);
-            }
+
+            var myTodos =
+                await _todoService
+                .GetByAssignedUserIdAsync(CurrentUserId);
+
+            var myDtoList =
+                _mapper.Map<IEnumerable<ToDoDTO>>(myTodos);
+
+            return Ok(myDtoList);
         }
 
+        // GET api/todos/1
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(int id)
         {
-            var t = await _todoService.GetByIdAsync(id);
-            if (t == null) return NotFound();
+            var todo = await _todoService.GetByIdAsync(id);
 
-            if (CurrentUserRole == "Manager" || t.AssignedToUserId == CurrentUserId)
+            if (todo == null)
+                return NotFound();
+
+            if (CurrentUserRole == "Manager"
+                || todo.AssignedToUserId == CurrentUserId)
             {
-                var dto = new ToDoDTO(
-                    t.Id,
-                    t.Title,
-                    t.Description,
-                    t.IsCompleted,
-                    t.DueDate,
-                    t.AssignedToUserId,
-                    t.CreatedByUserId,
-                    t.AssignedToUser?.Username,
-                    t.CreatedByUser?.Username
-                );
+                var dto =
+                    _mapper.Map<ToDoDTO>(todo);
+
                 return Ok(dto);
             }
 
             return Forbid();
         }
 
-        // Only Manager can create and assign tasks
+        // POST api/todos
         [HttpPost]
-        [Authorize(Roles ="Manager")]
-        public async Task<IActionResult> Create(CreateToDoDto dto)
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> Create(
+            CreateToDoDto dto)
         {
-            var todo = await _todoService.CreateAsync(dto, CurrentUserId);
-            return CreatedAtAction(nameof(Get), new { id = todo.Id }, todo);
+            var todo =
+                await _todoService
+                .CreateAsync(dto, CurrentUserId);
+
+            var response =
+                _mapper.Map<ToDoDTO>(todo);
+
+            return CreatedAtAction(
+                nameof(Get),
+                new { id = todo.Id },
+                response);
         }
 
-        // Managers can update any; employees can update only their assigned tasks (e.g. mark complete)
+        // PUT api/todos/1
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, UpdateToDoDto dto)
+        public async Task<IActionResult> Update(
+            int id,
+            UpdateToDoDto dto)
         {
-            var t = await _todoService.GetByIdAsync(id);
-            if (t == null) return NotFound();
+            var todo =
+                await _todoService.GetByIdAsync(id);
 
-            if (CurrentUserRole == "Manager" || t.AssignedToUserId == CurrentUserId)
+            if (todo == null)
+                return NotFound();
+
+            if (CurrentUserRole == "Manager"
+                || todo.AssignedToUserId == CurrentUserId)
             {
-                var updated = await _todoService.UpdateAsync(id, dto);
-                return Ok(updated);
+                var updated =
+                    await _todoService
+                    .UpdateAsync(id, dto);
+
+                return Ok(
+                    _mapper.Map<ToDoDTO>(updated));
             }
 
             return Forbid();
         }
 
+        // DELETE api/todos/1
         [HttpDelete("{id:int}")]
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> Delete(int id)
         {
-            var ok = await _todoService.DeleteAsync(id);
-            if (!ok) return NotFound();
+            var deleted =
+                await _todoService.DeleteAsync(id);
+
+            if (!deleted)
+                return NotFound();
+
             return NoContent();
         }
     }
