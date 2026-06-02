@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using TodoDemoApi.Data;
 using TodoDemoApi.Mappings;
+using TodoDemoApi.Middleware;
 using TodoDemoApi.Services;
 
 namespace TodoDemoApi
@@ -74,6 +75,9 @@ namespace TodoDemoApi
                 });
             });
             builder.Services.AddAutoMapper(typeof(MappingProfile));
+            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+            builder.Services.AddProblemDetails();
             var app = builder.Build();
 
             app.UseSwagger();
@@ -82,7 +86,7 @@ namespace TodoDemoApi
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseCors("AllowReactApp");
+            app.UseExceptionHandler();
             app.MapControllers();
 
             // Ensure DB is created and seeded
