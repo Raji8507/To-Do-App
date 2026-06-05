@@ -10,13 +10,11 @@ namespace TodoDemoApi.Services
     {
         private readonly AppDbContext _db;
         private readonly IMapper _mapper;
-
         public ToDoService(AppDbContext db, IMapper mapper)
         {
             _db = db;
             _mapper = mapper;
         }
-
         public async Task<ToDo> CreateAsync(CreateToDoDto dto, int createdByUserId)
         {
             var todo = _mapper.Map<ToDo>(dto);
@@ -25,11 +23,9 @@ namespace TodoDemoApi.Services
             await _db.SaveChangesAsync();
             return todo;
         }
-
         public async Task<bool> DeleteAsync(int id)
         {
             var todo = await _db.ToDos.FindAsync(id);
-
             if (todo == null)
                 return false;
 

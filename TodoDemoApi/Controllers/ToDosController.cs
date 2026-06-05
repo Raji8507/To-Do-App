@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Asp.Versioning;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
@@ -8,9 +9,12 @@ using TodoDemoApi.Services;
 
 namespace TodoDemoApi.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
     [Authorize]
+    [ApiVersion("1.0")]
+
+    [Route(
+    "api/v{version:apiVersion}/[controller]")]
     public class ToDosController : ControllerBase
     {
         private readonly IToDoService _todoService;

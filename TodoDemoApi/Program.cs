@@ -7,6 +7,7 @@ using TodoDemoApi.Data;
 using TodoDemoApi.Mappings;
 using TodoDemoApi.Middleware;
 using TodoDemoApi.Services;
+using Asp.Versioning;
 
 namespace TodoDemoApi
 {
@@ -78,6 +79,19 @@ namespace TodoDemoApi
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
             builder.Services.AddProblemDetails();
+            builder.Services.AddApiVersioning(options =>
+            {
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.ReportApiVersions = true;
+                options.ApiVersionReader = new UrlSegmentApiVersionReader();
+            })
+            .AddApiExplorer(options =>
+            {
+                options.GroupNameFormat = "'v'VVV";
+                options.SubstituteApiVersionInUrl = true;
+            });
+                        
             var app = builder.Build();
 
             app.UseSwagger();
